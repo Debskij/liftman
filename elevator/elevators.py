@@ -4,13 +4,13 @@ from bisect import insort_right
 
 
 @dataclass
-class elevator_dc:
+class ElevatorDc:
     cur_position: int
     cur_direction: int
     stops: List[int]
 
 
-class elevator:
+class Elevator:
     def __init__(self):
         self.cur_position = 0
         self.cur_direction = 0
@@ -21,16 +21,17 @@ class elevator:
                f'dir: {self.cur_direction}\n' \
                f'stops: {self.stops}'
 
+
 class ElevatorOperator:
-    def __init__(self, numberOfElevators: int):
-        if numberOfElevators < 1:
+    def __init__(self, number_of_elevators: int):
+        if number_of_elevators < 1:
             raise ValueError
-        self.elevators = numberOfElevators
-        self.next_stop = [0 for _ in range(numberOfElevators)]
-        self.final_stop = [0 for _ in range(numberOfElevators)]
-        self.positions = [0 for _ in range(numberOfElevators)]
-        self.stops = [list() for _ in range(numberOfElevators)]
-        self.vector = [0 for _ in range(numberOfElevators)]
+        self.elevators = number_of_elevators
+        self.next_stop = [0 for _ in range(number_of_elevators)]
+        self.final_stop = [0 for _ in range(number_of_elevators)]
+        self.positions = [0 for _ in range(number_of_elevators)]
+        self.stops = [list() for _ in range(number_of_elevators)]
+        self.vector = [0 for _ in range(number_of_elevators)]
         self.waiting_list = []
 
     def step(self):
@@ -53,8 +54,8 @@ class ElevatorOperator:
                     else:
                         self.vector[idx] = 0
 
-    def find_which_elevators(self, pos: int, dir: int) -> List[int]:
-        vector = 1 if pos-dir > 0 else -1
+    def find_which_elevators(self, pos: int, destination: int) -> List[int]:
+        vector = 1 if pos - destination > 0 else -1
         return [idx for idx in range(self.elevators) if
                 min(self.positions[idx], self.final_stop[idx]) <= pos <= max(self.positions[idx], self.final_stop[idx])
                 and self.vector == vector]
@@ -62,8 +63,9 @@ class ElevatorOperator:
     def find_closest(self, indexes: List[int], pos: int) -> int:
         return min(indexes, key=lambda x: abs(self.positions[x] - pos))
 
-    def call(self, pos: int, dir: int):
+    def call(self, pos: int, destination: int):
         pass
+
 
 if __name__ == '__main__':
     e = ElevatorOperator(3)
