@@ -1,9 +1,13 @@
-from typing import List
+from typing import List, Optional
 from liftman import Elevator, Direction, Passenger
 
 
 def find_closest(proper_elevators: List[Elevator], pos: int) -> Elevator:
     return min(proper_elevators, key=lambda elevator: abs(elevator.cur_position - pos))
+
+
+def find_closest_elevator(elevators: List[Elevator], passenger: Passenger) -> Elevator:
+    return min(elevators, key=lambda elevator: elevator.distance_to_passenger(passenger))
 
 
 class ElevatorOperator:
@@ -14,14 +18,15 @@ class ElevatorOperator:
         self.waiting_list: List[Passenger] = []
 
     def step(self) -> bool:
-        travel_dist = {elevator.distance_to_stop() for elevator in self.elevators if elevator.distance_to_stop() != 0}
         try:
-            travel_dist = min(travel_dist)
+            travel_dist = min(
+                [elevator.distance_to_stop() for elevator in self.elevators if elevator.distance_to_stop() > 0]
+            )
         except ValueError:
             return False
-        for elevator in self.elevators:
+        for idx, elevator in enumerate(self.elevators):
             if elevator.next_stop != elevator.cur_position:
-                elevator.cur_position += travel_dist * elevator.direction.value
+                self.elevators[idx].cur_position += travel_dist * elevator.direction.value
                 if elevator.cur_position == elevator.next_stop:
                     if elevator.stops:
                         distances = [
@@ -29,12 +34,12 @@ class ElevatorOperator:
                             for in_idx in range(len(elevator.stops))
                         ]
                         in_idx, _ = min(distances, key=lambda x: x[1])
-                        elevator.stops = list(filter(lambda x: x != elevator.next_stop, elevator.stops))
+                        self.elevators[idx].stops = list(filter(lambda x: x != elevator.next_stop, elevator.stops))
                     else:
-                        elevator.direction = Direction.STAY
+                        self.elevators[idx].direction = Direction.STAY
         return True
 
-    def find_which_elevators(self, passenger: Passenger) -> List[Elevator]:
+    def find_passing_elevators(self, passenger: Passenger) -> List[Elevator]:
         return [
             elevator
             for elevator in self.elevators
@@ -44,10 +49,20 @@ class ElevatorOperator:
             and elevator.direction == passenger.direction()
         ]
 
+    def idle_elevators(self) -> List[Elevator]:
+        return [elevator for elevator in self.elevators if elevator.direction == Direction.STAY]
+
     def call(self, passenger: Passenger) -> None:
         if passenger.position == passenger.destination:
             return
         self.waiting_list.append(passenger)
 
-    def assign_elevator(self, passenger):
-        pass
+    def find_elevator(self, passenger) -> Optional[Elevator]:
+        elevators_going_by = self.find_passing_elevators(passenger)
+        idle_elevators = self.idle_elevators()
+        closest_elevator = None
+        if elevators_going_by:
+            closest_elevator = find_closest_elevator(elevators_going_by, passenger)
+        elif closest_elevator:
+            closest_elevator = find_closest_elevator(idle_elevators, passenger)
+        return closest_elevator

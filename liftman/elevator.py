@@ -17,5 +17,8 @@ class Elevator:
             f"stops: {self.stops}"
         )
 
-    def distance_to_stop(self):
+    def distance_to_stop(self) -> int:
         return abs(self.cur_position - self.next_stop)
+
+    def distance_to_passenger(self, passenger: Passenger) -> int:
+        return abs(self.cur_position - passenger.position)
