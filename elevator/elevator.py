@@ -1,5 +1,5 @@
 from typing import List
-from direction import Direction
+from helpers import Direction, Passenger
 
 
 class Elevator:
@@ -8,7 +8,7 @@ class Elevator:
         self.next_stop: int = 0
         self.final_stop: int = 0
         self.direction: Direction = Direction.STAY
-        self.stops: List[int] = []
+        self.stops: List[Passenger] = []
 
     def __str__(self):
         return (
@@ -16,3 +16,6 @@ class Elevator:
             f"final stop: {self.final_stop} direction: {Direction.name}\n"
             f"stops: {self.stops}"
         )
+
+    def distance_to_stop(self):
+        return abs(self.cur_position - self.next_stop)
