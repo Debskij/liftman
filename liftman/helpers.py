@@ -22,3 +22,6 @@ class Passenger:
 
     def direction(self) -> Direction:
         return Direction.UP if self.position - self.destination > 0 else Direction.DOWN
+
+    def amount_of_floors(self) -> int:
+        return abs(self.position - self.destination)

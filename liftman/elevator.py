@@ -20,6 +20,11 @@ class Elevator:
     def __add__(self, other: Passenger):
         if self.direction == Direction.STAY:
             self.direction = other.direction()
+            self.final_stop = other.destination
+            self.next_stop = other.destination
+        else:
+            self.final_stop = max(self.final_stop * self.direction.value, other.destination * self.direction.value)
+            self.next_stop = min(self.next_stop * self.direction.value, other.destination * self.direction.value)
         self.stops.append(other)
 
     def distance_to_stop(self) -> int:
@@ -38,6 +43,8 @@ class Elevator:
 
     def remove_stops(self, floor_to_filter: int) -> None:
         self.stops = list(filter(lambda passenger: passenger.destination != floor_to_filter, self.stops))
+        if not self.stops:
+            self.direction = Direction.STAY
 
     def set_next_destination(self, stop: Passenger):
         self.next_stop = stop.destination
