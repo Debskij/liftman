@@ -1,5 +1,5 @@
 from typing import List
-from helpers import Direction, Passenger
+from liftman import Direction, Passenger
 
 
 class Elevator:

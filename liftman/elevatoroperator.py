@@ -1,6 +1,5 @@
 from typing import List
-from elevator import Elevator
-from helpers import Direction, Passenger
+from liftman import Elevator, Direction, Passenger
 
 
 def find_closest(proper_elevators: List[Elevator], pos: int) -> Elevator:
@@ -14,9 +13,12 @@ class ElevatorOperator:
         self.elevators = [Elevator() for _ in range(number_of_elevators)]
         self.waiting_list: List[Passenger] = []
 
-    def step(self):
+    def step(self) -> bool:
         travel_dist = {elevator.distance_to_stop() for elevator in self.elevators if elevator.distance_to_stop() != 0}
-        travel_dist = min(travel_dist)
+        try:
+            travel_dist = min(travel_dist)
+        except ValueError:
+            return False
         for elevator in self.elevators:
             if elevator.next_stop != elevator.cur_position:
                 elevator.cur_position += travel_dist * elevator.direction.value
@@ -30,20 +32,21 @@ class ElevatorOperator:
                         elevator.stops = list(filter(lambda x: x != elevator.next_stop, elevator.stops))
                     else:
                         elevator.direction = Direction.STAY
+        return True
 
-    def find_which_elevators(self, pos: int, destination: int) -> List[int]:
-        direction = Direction.UP if pos - destination > 0 else Direction.DOWN
-
+    def find_which_elevators(self, passenger: Passenger) -> List[Elevator]:
         return [
-            idx
-            for idx, elevator in enumerate(self.elevators)
+            elevator
+            for elevator in self.elevators
             if min(elevator.cur_position, elevator.final_stop)
-            <= pos
+            <= passenger.position
             <= max(elevator.cur_position, elevator.final_stop)
-            and elevator.direction == direction
+            and elevator.direction == passenger.direction()
         ]
 
-    def call(self, passenger: Passenger):
+    def call(self, passenger: Passenger) -> None:
+        if passenger.position == passenger.destination:
+            return
         self.waiting_list.append(passenger)
 
     def assign_elevator(self, passenger):
