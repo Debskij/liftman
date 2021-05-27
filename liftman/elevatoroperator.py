@@ -18,25 +18,23 @@ class ElevatorOperator:
         self.waiting_list: List[Passenger] = []
 
     def step(self) -> bool:
+        self.resolve_queue()
         try:
             travel_dist = min(
                 [elevator.distance_to_stop() for elevator in self.elevators if elevator.distance_to_stop() > 0]
             )
         except ValueError:
             return False
-        for idx, elevator in enumerate(self.elevators):
+        for elevator in self.elevators:
             if elevator.next_stop != elevator.cur_position:
-                self.elevators[idx].cur_position += travel_dist * elevator.direction.value
+                elevator.modify_position(travel_dist * elevator.direction.value)
                 if elevator.cur_position == elevator.next_stop:
                     if elevator.stops:
-                        distances = [
-                            (in_idx, abs(elevator.cur_position - elevator.stops[in_idx].position))
-                            for in_idx in range(len(elevator.stops))
-                        ]
-                        in_idx, _ = min(distances, key=lambda x: x[1])
-                        self.elevators[idx].stops = list(filter(lambda x: x != elevator.next_stop, elevator.stops))
+                        next_stop = min(elevator.stops, key=lambda stop: abs(elevator.cur_position - stop.position))
+                        elevator.set_next_destination(next_stop)
+                        elevator.remove_stops(elevator.next_stop)
                     else:
-                        self.elevators[idx].direction = Direction.STAY
+                        elevator.modify_direction(Direction.STAY)
         return True
 
     def find_passing_elevators(self, passenger: Passenger) -> List[Elevator]:
@@ -66,3 +64,14 @@ class ElevatorOperator:
         elif closest_elevator:
             closest_elevator = find_closest_elevator(idle_elevators, passenger)
         return closest_elevator
+
+    def resolve_queue(self):
+        passengers_assigned = list()
+        for idx, passenger in enumerate(self.waiting_list):
+            maybe_elevator = self.find_elevator(passenger)
+            if maybe_elevator:
+                maybe_elevator += passenger
+                passengers_assigned.append(idx)
+        self.waiting_list = [
+            passenger for idx, passenger in enumerate(self.waiting_list) if idx not in passengers_assigned
+        ]
