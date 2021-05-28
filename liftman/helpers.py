@@ -12,6 +12,7 @@ class Direction(Enum):
 class Passenger:
     position: int
     destination: int
+    taken: bool = False
 
     def __str__(self):
         return f"Passenger going from {self.position} to {self.destination}\n"

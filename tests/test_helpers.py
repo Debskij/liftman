@@ -39,3 +39,7 @@ class TestHelpers:
 
     def test_amount_of_floors_positive(self, down_passenger):
         assert down_passenger.amount_of_floors() == 2
+
+    def test_str_passenger(self, up_passenger):
+        assert str(up_passenger.position) in list(str(up_passenger))
+        assert str(up_passenger.destination) in list(str(up_passenger))
