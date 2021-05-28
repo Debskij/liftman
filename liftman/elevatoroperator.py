@@ -2,20 +2,20 @@ from typing import List, Optional
 from liftman import Elevator, Direction, Passenger
 
 
-def find_closest(proper_elevators: List[Elevator], pos: int) -> Elevator:
-    return min(proper_elevators, key=lambda elevator: abs(elevator.cur_position - pos))
-
-
-def find_closest_elevator(elevators: List[Elevator], passenger: Passenger) -> Elevator:
-    return min(elevators, key=lambda elevator: elevator.distance_to_passenger(passenger))
-
-
 class ElevatorOperator:
     def __init__(self, number_of_elevators: int):
         if number_of_elevators < 1:
             raise ValueError
         self.elevators = [Elevator() for _ in range(number_of_elevators)]
         self.waiting_list: List[Passenger] = []
+
+    @staticmethod
+    def find_closest(proper_elevators: List[Elevator], pos: int) -> Elevator:
+        return min(proper_elevators, key=lambda elevator: abs(elevator.cur_position - pos))
+
+    @staticmethod
+    def find_closest_elevator(elevators: List[Elevator], passenger: Passenger) -> Elevator:
+        return min(elevators, key=lambda elevator: elevator.distance_to_passenger(passenger))
 
     def step(self) -> bool:
         self.resolve_queue()
@@ -31,8 +31,10 @@ class ElevatorOperator:
                 if elevator.cur_position == elevator.next_stop:
                     if elevator.stops:
                         next_stop = min(elevator.stops, key=lambda stop: abs(elevator.cur_position - stop.position))
-                        elevator.set_next_destination(next_stop)
-                        elevator.remove_stops(elevator.next_stop)
+                        elevator.set_next_stop(next_stop.destination)
+                        elevator.remove_stops(elevator.cur_position)
+                        elevator.set_taken_status(elevator.cur_position)
+
                     else:
                         elevator.modify_direction(Direction.STAY)
         return True
@@ -41,9 +43,9 @@ class ElevatorOperator:
         return [
             elevator
             for elevator in self.elevators
-            if min(elevator.cur_position, elevator.final_stop)
+            if min(elevator.cur_position, elevator.next_stop if elevator.going_to_pickup else elevator.final_stop)
             <= passenger.position
-            <= max(elevator.cur_position, elevator.final_stop)
+            <= max(elevator.cur_position, elevator.next_stop if elevator.going_to_pickup else elevator.final_stop)
             and elevator.direction == passenger.direction()
         ]
 
@@ -60,9 +62,9 @@ class ElevatorOperator:
         idle_elevators = self.idle_elevators()
         closest_elevator = None
         if elevators_going_by:
-            closest_elevator = find_closest_elevator(elevators_going_by, passenger)
+            closest_elevator = self.find_closest_elevator(elevators_going_by, passenger)
         elif closest_elevator:
-            closest_elevator = find_closest_elevator(idle_elevators, passenger)
+            closest_elevator = self.find_closest_elevator(idle_elevators, passenger)
         return closest_elevator
 
     def resolve_queue(self):
