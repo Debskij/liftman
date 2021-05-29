@@ -49,8 +49,7 @@ class ElevatorOperator:
         return [elevator for elevator in self.elevators if elevator.direction == Direction.STAY]
 
     def call(self, passenger: Passenger) -> None:
-        if passenger.position == passenger.destination:
-            return
+        assert not passenger.position == passenger.destination
         self.waiting_list.append(passenger)
 
     def find_elevator(self, passenger) -> Optional[Elevator]:
