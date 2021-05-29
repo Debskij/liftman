@@ -1,17 +1,17 @@
-from pytest import raises, fixture
+import pytest
 from liftman import Direction, Passenger
 
 
 class TestHelpers:
-    @fixture()
+    @pytest.fixture()
     def up_passenger(self):
         return Passenger(3, 5)
 
-    @fixture()
+    @pytest.fixture()
     def down_passenger(self):
         return Passenger(5, 3)
 
-    @fixture()
+    @pytest.fixture()
     def stay_passenger(self):
         return Passenger(3, 3)
 
@@ -31,7 +31,7 @@ class TestHelpers:
         assert down_passenger.direction() == Direction.DOWN
 
     def test_invalid_passenger_direction(self, stay_passenger):
-        with raises(ValueError):
+        with pytest.raises(ValueError):
             _ = stay_passenger.direction()
 
     def test_amount_of_floors_negative(self, up_passenger):
