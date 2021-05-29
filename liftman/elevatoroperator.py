@@ -10,10 +10,6 @@ class ElevatorOperator:
         self.waiting_list: List[Passenger] = []
 
     @staticmethod
-    def find_closest(proper_elevators: List[Elevator], pos: int) -> Elevator:
-        return min(proper_elevators, key=lambda elevator: abs(elevator.cur_position - pos))
-
-    @staticmethod
     def find_closest_elevator(elevators: List[Elevator], passenger: Passenger) -> Elevator:
         return min(elevators, key=lambda elevator: elevator.distance_to_passenger(passenger))
 
