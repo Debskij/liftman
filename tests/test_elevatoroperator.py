@@ -42,3 +42,57 @@ class TestElevatorOperator:
         elevator_operator.elevators[1].direction = Direction.STAY
         elevator_operator.elevators[2].direction = Direction.DOWN
         assert len(elevator_operator.idle_elevators()) == 2
+
+    def test_assigning_one_passenger_to_one_elevator(self):
+        elevator_operator = ElevatorOperator(1)
+        elevator_operator.call(Passenger(1, 5))
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 1
+        assert elevator_operator.elevators[0].next_stop == 5
+        assert elevator_operator.elevators[0].final_stop == 5
+        assert elevator_operator.elevators[0].direction == Direction.UP
+
+    def test_assigning_two_passengers_to_one_elevator(self):
+        elevator_operator = ElevatorOperator(1)
+        elevator_operator.call(Passenger(1, 5))
+        elevator_operator.call(Passenger(2, 7))
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 1
+        assert elevator_operator.elevators[0].next_stop == 2
+        assert elevator_operator.elevators[0].final_stop == 7
+        assert elevator_operator.elevators[0].direction == Direction.UP
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 2
+        assert elevator_operator.elevators[0].next_stop == 5
+        assert elevator_operator.elevators[0].final_stop == 7
+        assert elevator_operator.elevators[0].direction == Direction.UP
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 5
+        assert elevator_operator.elevators[0].next_stop == 7
+        assert elevator_operator.elevators[0].final_stop == 7
+        assert elevator_operator.elevators[0].direction == Direction.UP
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 7
+        assert elevator_operator.elevators[0].next_stop == 7
+        assert elevator_operator.elevators[0].final_stop == 7
+        assert elevator_operator.elevators[0].direction == Direction.STAY
+
+    def test_assigning_two_passengers_to_one_elevator_starting_floor_0(self):
+        elevator_operator = ElevatorOperator(1)
+        elevator_operator.call(Passenger(0, 5))
+        elevator_operator.call(Passenger(2, 7))
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 2
+        assert elevator_operator.elevators[0].next_stop == 5
+        assert elevator_operator.elevators[0].final_stop == 7
+        assert elevator_operator.elevators[0].direction == Direction.UP
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 5
+        assert elevator_operator.elevators[0].next_stop == 7
+        assert elevator_operator.elevators[0].final_stop == 7
+        assert elevator_operator.elevators[0].direction == Direction.UP
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 7
+        assert elevator_operator.elevators[0].next_stop == 7
+        assert elevator_operator.elevators[0].final_stop == 7
+        assert elevator_operator.elevators[0].direction == Direction.STAY

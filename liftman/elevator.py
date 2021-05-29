@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from liftman import Direction, Passenger
 
 
@@ -7,7 +7,8 @@ class Elevator:
         self.cur_position: int = 0
         self.next_stop: int = 0
         self.final_stop: int = 0
-        self.going_to_pickup: bool = False
+        self.pickup_floor: Optional[int] = None
+        self.pickup_direction: Direction = Direction.STAY
         self.direction: Direction = Direction.STAY
         self.stops: List[Passenger] = []
 
@@ -15,7 +16,7 @@ class Elevator:
         return (
             f"pos: {self.cur_position} next stop: {self.next_stop} \n"
             f"final stop: {self.final_stop} direction: {self.direction.name} \n"
-            f"stops: {self.stops}"
+            f"pickup floor: {self.pickup_floor} \nstops: {self.stops}"
         )
 
     def __add__(self, other: Passenger):
@@ -25,16 +26,24 @@ class Elevator:
                 self.direction = other.direction()
                 self.final_stop = other.destination
                 self.next_stop = other.destination
-                self.going_to_pickup = False
             else:
                 self.direction = self.calculate_direction(other.position)
                 self.next_stop = other.position
                 self.final_stop = other.destination
-                self.going_to_pickup = True
+                self.pickup_floor = other.position
+                self.pickup_direction = other.direction()
         else:
-            if self.going_to_pickup:
+            if self.pickup_floor is None:
                 self.final_stop = max(self.final_stop * self.direction.value, other.destination * self.direction.value)
-            self.next_stop = min(self.next_stop * self.direction.value, other.destination * self.direction.value)
+            else:
+                self.final_stop = max(
+                    self.final_stop * self.pickup_direction.value, other.destination * self.pickup_direction.value
+                )
+            self.next_stop = min(
+                self.next_stop * self.direction.value,
+                other.position * self.direction.value,
+                other.destination * self.direction.value,
+            )
         self.stops.append(other)
         return self
 
@@ -43,6 +52,24 @@ class Elevator:
         if self.cur_position == destination:
             return Direction.STAY
         return Direction.UP if destination - self.cur_position > 0 else Direction.DOWN
+
+    def calculate_next_stop(self) -> int:
+        try:
+            return min(
+                [
+                    passenger.position
+                    for passenger in self.stops
+                    if (passenger.position - self.cur_position) * self.direction.value > 0
+                ]
+                + [
+                    passenger.destination
+                    for passenger in self.stops
+                    if (passenger.destination - self.cur_position) * self.direction.value > 0
+                ],
+                key=lambda x: abs(self.cur_position - x),
+            )
+        except ValueError:
+            return self.next_stop
 
     def distance_to_stop(self) -> int:
         return abs(self.cur_position - self.next_stop)
@@ -53,7 +80,7 @@ class Elevator:
 
     def modify_position(self, new_position: int) -> None:
         assert isinstance(new_position, int)
-        self.cur_position = new_position
+        self.cur_position += new_position
 
     def modify_direction(self, new_direction: Direction) -> None:
         assert isinstance(new_direction, Direction)
@@ -74,3 +101,9 @@ class Elevator:
         for idx, passenger in enumerate(self.stops):
             if passenger.position == floor:
                 self.stops[idx].taken = True
+
+    def remove_pickup(self, floor: int) -> None:
+        assert isinstance(floor, int)
+        if floor == self.pickup_floor:
+            self.pickup_floor = None
+            self.direction = self.pickup_direction
