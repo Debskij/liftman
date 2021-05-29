@@ -96,3 +96,27 @@ class TestElevatorOperator:
         assert elevator_operator.elevators[0].next_stop == 7
         assert elevator_operator.elevators[0].final_stop == 7
         assert elevator_operator.elevators[0].direction == Direction.STAY
+
+    def test_elevator_without_passengers_step(self):
+        elevator_operator = ElevatorOperator(1)
+        elevator_operator.step()
+
+    def test_assigning_two_passengers_to_one_elevators_with_different_directions(self):
+        elevator_operator = ElevatorOperator(1)
+        elevator_operator.call(Passenger(5, 1))
+        elevator_operator.call(Passenger(2, 3))
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 2
+        assert elevator_operator.elevators[0].next_stop == 3
+        assert elevator_operator.elevators[0].final_stop == 1
+        assert elevator_operator.elevators[0].direction == Direction.UP
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 3
+        assert elevator_operator.elevators[0].next_stop == 5
+        assert elevator_operator.elevators[0].final_stop == 1
+        assert elevator_operator.elevators[0].direction == Direction.UP
+        elevator_operator.step()
+        assert elevator_operator.elevators[0].cur_position == 5
+        assert elevator_operator.elevators[0].next_stop == 1
+        assert elevator_operator.elevators[0].final_stop == 1
+        assert elevator_operator.elevators[0].direction == Direction.DOWN

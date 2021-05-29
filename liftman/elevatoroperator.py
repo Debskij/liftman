@@ -25,14 +25,11 @@ class ElevatorOperator:
             if elevator.next_stop != elevator.cur_position:
                 elevator.modify_position(travel_dist * elevator.direction.value)
                 if elevator.cur_position == elevator.next_stop:
-                    if elevator.stops:
-                        next_stop = elevator.calculate_next_stop()
-                        elevator.set_next_stop(next_stop)
-                        elevator.remove_stops(elevator.cur_position)
-                        elevator.remove_pickup(elevator.cur_position)
-                        elevator.set_taken_status(elevator.cur_position)
-                    else:
-                        elevator.modify_direction(Direction.STAY)
+                    elevator.remove_stops(elevator.cur_position)
+                    elevator.remove_pickup(elevator.cur_position)
+                    elevator.set_taken_status(elevator.cur_position)
+                    next_stop = elevator.calculate_next_stop()
+                    elevator.set_next_stop(next_stop)
         return True
 
     def find_passing_elevators(self, passenger: Passenger) -> List[Elevator]:
@@ -43,9 +40,8 @@ class ElevatorOperator:
                 elevator.pickup_direction == passenger.direction() and elevator.direction == passenger.direction()
             ) or elevator.pickup_floor is None:
                 return position_between_two_values(elevator.cur_position, elevator.final_stop)
-            elif elevator.pickup_direction != passenger.direction():
+            else:
                 return position_between_two_values(elevator.cur_position, elevator.pickup_floor)
-            return False
 
         def position_between_two_values(first_position: int, second_position: int) -> bool:
             return min(first_position, second_position) <= passenger.position <= max(first_position, second_position)
@@ -79,27 +75,3 @@ class ElevatorOperator:
         self.waiting_list = [
             passenger for idx, passenger in enumerate(self.waiting_list) if idx not in passengers_assigned
         ]
-
-
-if __name__ == "__main__":
-    elevator_operator = ElevatorOperator(1)
-    print(elevator_operator.elevators[0])
-    elevator_operator.call(Passenger(0, 5))
-    elevator_operator.call(Passenger(2, 7))
-    print(elevator_operator.waiting_list)
-    elevator_operator.step()
-    print("NEXT STEP\n\n")
-    print(elevator_operator.elevators[0])
-    # print(elevator_operator.elevators[1])
-    elevator_operator.step()
-    print("NEXT STEP\n\n")
-    print(elevator_operator.elevators[0])
-    # print(elevator_operator.elevators[1])
-    elevator_operator.step()
-    print("NEXT STEP\n\n")
-    print(elevator_operator.elevators[0])
-    # print(elevator_operator.elevators[1])
-    elevator_operator.step()
-    print("NEXT STEP\n\n")
-    print(elevator_operator.elevators[0])
-    # print(elevator_operator.elevators[1])

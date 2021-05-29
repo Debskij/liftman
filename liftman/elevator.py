@@ -37,7 +37,7 @@ class Elevator:
                 self.final_stop = max(self.final_stop * self.direction.value, other.destination * self.direction.value)
             else:
                 self.final_stop = max(
-                    self.final_stop * self.pickup_direction.value, other.destination * self.pickup_direction.value
+                    [self.final_stop, other.destination], key=lambda x: x * self.pickup_direction.value
                 )
             self.next_stop = min(
                 self.next_stop * self.direction.value,
