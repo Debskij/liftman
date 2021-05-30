@@ -1,6 +1,8 @@
+import os
+
 from liftman import ElevatorOperator, Passenger, Elevator
 from typing import List, Tuple, Dict, Callable
-from liftman.consts import prompt, messages, elevator_emoji, final_floor_emoji, next_floor_emoji
+from liftman.consts import prompt, messages, elevator_emoji, final_floor_emoji, next_floor_emoji, help_msg
 
 
 class UserInterface:
@@ -42,6 +44,10 @@ class UserInterface:
             return "\n" + "|" + "".join([f"__{e_no}_" for e_no in range(1, len(e) + 1)]) + "_|"
 
         print(banner() + elevators() + parquet())
+
+    @staticmethod
+    def show_passangers_for_all_elevators(elevator_operator: ElevatorOperator):
+        print("\n".join([f"{idx+1}. {elevator.stops}" for idx, elevator in enumerate(elevator_operator.elevators)]))
 
     @staticmethod
     def validate_value(lower_bound, upper_bound, type_cast, input_prompt: str):
@@ -100,15 +106,20 @@ class UserInterface:
             "c": UserInterface.passenger_call,
             "d": UserInterface.visual_ascii_display,
             "e": UserInterface.do_step,
+            "f": UserInterface.show_passangers_for_all_elevators,
         }
         args: Dict[str, List] = {
             "a": [elevator_operator],
             "c": [elevator_operator, height],
             "d": [elevator_operator.elevators, height],
             "e": [elevator_operator],
+            "f": [elevator_operator],
         }
         while True:
-            cmd = UserInterface.validate_value("a", "e", str, prompt["decision"])
+
+            print(help_msg)
+            cmd = UserInterface.validate_value("a", "f", str, prompt["decision"])
+            os.system("cls" if os.name == "nt" else "clear")
             if cmd == "b":
                 return
             else:

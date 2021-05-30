@@ -17,3 +17,14 @@ messages = {
     "d_step": "Step done",
     "f_step": "No more floors to travel",
 }
+
+help_msg = (
+    "\n_______________________________________________________________________\n"
+    "Commands description\n"
+    "a: All passengers that are not assigned to elevator are displayed.\n"
+    "b: Break the program and exit the program.\n"
+    "c: Call elevator for new passenger.\n"
+    "d: Display whole building status with elevators.\n"
+    "e: Elevators will do a step.\n"
+    "f: Full description of each elevator stops (passengers that are travelling)"
+)
