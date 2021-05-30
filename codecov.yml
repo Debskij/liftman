@@ -1,3 +1,8 @@
-fail_ci_if_error: success
-verbose: true
-informational: true
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
