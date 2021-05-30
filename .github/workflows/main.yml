@@ -43,6 +43,7 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
-        fail_ci_if_error: error
-        verbose: false
+        target: 75%
+        fail_ci_if_error: success
+        verbose: true
         informational: true
