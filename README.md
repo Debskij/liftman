@@ -1,6 +1,12 @@
 [![codecov](https://codecov.io/gh/Debskij/liftman/branch/master/graph/badge.svg)](https://codecov.io/gh/Debskij/liftman)
+[![Sanity check](https://github.com/Debskij/liftman/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/Debskij/liftman/actions/workflows/main.yml)
 # LIFTMAN
 Project focused around creating solution for multiple elevators in single building
+
+## Backstory
+You are owner of modern, hotel where hotel residents can call elevator by using their phone.
+With their smartphones they tell system where are they, and where they want to go. 
+Elevator systems can use this knowledge to optimise route to give hotel residents best experience.
 
 ## Tasks 
 * [x] Implement basic operations for one elevator
