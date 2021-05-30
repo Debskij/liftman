@@ -10,7 +10,7 @@ Project focused around creating solution for multiple elevators in single buildi
 * [x] Cover all functionalities with tests (without UI)
 * [x] Create github actions workflow
 * [x] Add test coverage badge
-* [ ] Add dockerfille
+* [x] Add dockerfille
 * [ ] Implement more features
     - [ ] Predict elevator movement to optimise route even further
     - [ ] Add weight to passenger
@@ -21,3 +21,7 @@ Project focused around creating solution for multiple elevators in single buildi
 ## Execution
 Using python3.9 \
 `python -m liftman`
+
+Using docker \
+`docker build -t liftman .`\
+`docker run -it -t liftman`

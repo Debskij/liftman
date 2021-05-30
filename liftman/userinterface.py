@@ -63,6 +63,7 @@ class UserInterface:
 
     @staticmethod
     def initialization() -> Tuple[ElevatorOperator, int]:
+        os.system("cls" if os.name == "nt" else "clear")
         elevators_no = UserInterface.validate_value(1, 1000, int, prompt["e_no"])
         floors_no = UserInterface.validate_value(1, 1000, int, prompt["f_no"])
         return ElevatorOperator(elevators_no), floors_no
