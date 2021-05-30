@@ -53,6 +53,7 @@ class ElevatorOperator:
 
     def call(self, passenger: Passenger) -> None:
         assert not passenger.position == passenger.destination
+        print(f"Added passenger {passenger} to waiting list")
         self.waiting_list.append(passenger)
 
     def find_elevator(self, passenger) -> Optional[Elevator]:

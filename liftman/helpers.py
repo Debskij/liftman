@@ -15,7 +15,7 @@ class Passenger:
     taken: bool = False
 
     def __str__(self):
-        return f"Passenger going from {self.position} to {self.destination}\n"
+        return f"Passenger going from {self.position} to {self.destination}"
 
     def direction(self) -> Direction:
         if self.position == self.destination:
