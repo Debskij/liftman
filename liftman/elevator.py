@@ -14,9 +14,9 @@ class Elevator:
 
     def __str__(self):
         return (
-            f"pos: {self.cur_position} next stop: {self.next_stop} \n"
-            f"final stop: {self.final_stop} direction: {self.direction.name} \n"
-            f"pickup floor: {self.pickup_floor} \nstops: {self.stops}"
+            f"pos: {self.cur_position} next: {self.next_stop} \n"
+            f"final: {self.final_stop} dir: {self.direction.name} \n"
+            f"\nstops: {self.stops}"
         )
 
     def __add__(self, other: Passenger):
