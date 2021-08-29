@@ -17,12 +17,6 @@ Elevator systems can use this knowledge to optimise route to give hotel resident
 * [x] Create github actions workflow
 * [x] Add test coverage badge
 * [x] Add dockerfille
-* [ ] Implement more features
-    - [ ] Predict elevator movement to optimise route even further
-    - [ ] Add weight to passenger
-    - [ ] Add limitation of people in single elevator
-    - [ ] Graphic UI
-* [ ] Mock prompt to test UI
   
 ## Execution
 Using python3.9 \
